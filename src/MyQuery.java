@@ -34,8 +34,6 @@ public class MyQuery {
         System.out.println("******** Query 0 ********");
         System.out.println("Book_Title");
         while (resultSet.next()) {
-// It is possible to get the columns via name
-// also possible to get the columns via the column number which starts at 1
             String name = resultSet.getString(1);
             System.out.println(name);
         }
@@ -206,6 +204,21 @@ public class MyQuery {
     }
     public void findHighestProfit() throws SQLException
     {
+        Scanner kb = new Scanner(System.in);
         System.out.println("******** Query 7 ********");
+        System.out.print("Please enter the category name: ");
+        String catInput = kb.next();
+        String query = "CALL GetHighestSumPerCat('"+catInput+"');";
+        resultSet = statement.executeQuery(query);
+        while (resultSet.next()) {
+            String title = resultSet.getString(1);
+            String isbn = resultSet.getString(2);
+            String profit = resultSet.getString(3);
+            String category = resultSet.getString(4);
+            System.out.println("Book \"" +title+ "\" (ISBN: " +isbn+ ") has " +
+                    "the highest profit $" +profit+ " in " +category+ " " +
+                    "category.");
+        }
+        System.out.println();
     }
 }
