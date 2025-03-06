@@ -91,17 +91,54 @@ public class MyQuery {
     }
     public void findBookProfit() throws SQLException
     {
+        String query = "SELECT ISBN, Title, Category, sum((PaidEach - Cost)* " +
+                "quantity) " +
+                "FROM BOOKS JOIN ORDERITEMS USING (ISBN) " +
+                "GROUP BY BOOKS.ISBN " +
+                "ORDER BY sum((PaidEach - cost) *quantity) ASC;";
+        resultSet = statement.executeQuery(query);
     }
     public void printBookProfit() throws IOException, SQLException
     {
         System.out.println("******** Query 3 ********");
+        System.out.println("ISBN\tTitle\tCategory\tProfit");
+        while (resultSet.next()) {
+// It is possible to get the columns via name
+// also possible to get the columns via the column number which starts at 1
+            String isbn = resultSet.getString(1);
+            String title = resultSet.getString(2);
+            String category = resultSet.getString(3);
+            String profit = resultSet.getString(4);
+            System.out.println(isbn +"\t"+ title +"\t"+ category +"\t"+ profit);
+        }
+        System.out.println();
     }
     public void findHighestProfitPerCategory() throws SQLException
     {
+        String query = "SELECT ISBN, Title, Category, sum((PaidEach - Cost) *" +
+                " Quantity) " +
+                "FROM BOOKS b1 JOIN ORDERITEMS USING (ISBN) " +
+                "GROUP BY ISBN, Title, Category " +
+                "HAVING sum((PaidEach - Cost) * Quantity) >= all ( " +
+                "SELECT sum((PaidEach - Cost) * Quantity) " +
+                "FROM ORDERITEMS JOIN BOOKS b2 USING (ISBN) " +
+                "WHERE b1.Category=b2.Category " +
+                "GROUP BY ISBN, b2.Category) " +
+                "ORDER BY sum((PaidEach - Cost) * Quantity) ASC;";
+        resultSet = statement.executeQuery(query);
     }
     public void printHighestProfitPerCategory() throws IOException, SQLException
     {
         System.out.println("******** Query 4 ********");
+        System.out.println("ISBN\tTitle\tCategory\tProfit");
+        while (resultSet.next()) {
+            String isbn = resultSet.getString(1);
+            String title = resultSet.getString(2);
+            String category = resultSet.getString(3);
+            String profit = resultSet.getString(4);
+            System.out.println(isbn +"\t"+ title +"\t"+ category +"\t"+ profit);
+        }
+        System.out.println();
     }
     public void findMinMaxOrderDate() throws SQLException
     {
