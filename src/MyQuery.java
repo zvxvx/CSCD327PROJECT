@@ -204,12 +204,14 @@ public class MyQuery {
     }
     public void findHighestProfit() throws SQLException
     {
-        Scanner kb = new Scanner(System.in);
         System.out.println("******** Query 7 ********");
         System.out.print("Please enter the category name: ");
+        Scanner kb = new Scanner(System.in);
         String catInput = kb.next();
-        String query = "CALL GetHighestSumPerCat('"+catInput+"');";
-        resultSet = statement.executeQuery(query);
+        String query = "CALL GetHighestSumPerCat(?);";
+        PreparedStatement statement = conn.prepareStatement(query);
+        statement.setString(1, catInput);
+        resultSet = statement.executeQuery();
         while (resultSet.next()) {
             String title = resultSet.getString(1);
             String isbn = resultSet.getString(2);
