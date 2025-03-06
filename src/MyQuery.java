@@ -81,8 +81,6 @@ public class MyQuery {
         System.out.println("******** Query 2 ********");
         System.out.println("Num_of_Books\tAuthor_Name");
         while (resultSet.next()) {
-// It is possible to get the columns via name
-// also possible to get the columns via the column number which starts at 1
             String author = resultSet.getString(1);
             String books = resultSet.getString(2);
             System.out.println(books +"\t\t\t\t"+ author);
@@ -123,7 +121,7 @@ public class MyQuery {
                 "SELECT sum((PaidEach - Cost) * Quantity) " +
                 "FROM ORDERITEMS JOIN BOOKS b2 USING (ISBN) " +
                 "WHERE b1.Category=b2.Category " +
-                "GROUP BY ISBN, b2.Category) " +
+                "GROUP BY ISBN, Category) " +
                 "ORDER BY sum((PaidEach - Cost) * Quantity) ASC;";
         resultSet = statement.executeQuery(query);
     }
@@ -142,17 +140,69 @@ public class MyQuery {
     }
     public void findMinMaxOrderDate() throws SQLException
     {
+        String query = "SELECT ISBN, Title, Name, " +
+                "min(" +
+                "CASE " +
+                "    WHEN OrderDate IS NULL THEN 'N/A' " +
+                "    ELSE OrderDate " +
+                "    END), " +
+                "max(" +
+                "CASE " +
+                "    WHEN OrderDate IS NULL THEN 'N/A' " +
+                "    ELSE OrderDate " +
+                "    End), " +
+                "sum(" +
+                "CASE " +
+                "    WHEN Quantity IS NULL THEN 0" +
+                "    ELSE Quantity" +
+                "    END) " +
+                "FROM PUBLISHER JOIN BOOKS USING (PubID) " +
+                "LEFT JOIN ORDERITEMS USING (ISBN) " +
+                "LEFT JOIN ORDERS USING (Order_num) " +
+                "GROUP BY ISBN, Title, Name " +
+                "ORDER BY sum(quantity) DESC;";
+        resultSet = statement.executeQuery(query);
     }
     public void printMinMaxOrderDate() throws IOException, SQLException
     {
         System.out.println("******** Query 5 ********");
+        System.out.println("ISBN\tTitle\tName\tEarliest_Order_Date" +
+                "\tLatest_Order_Date\tTotal_quantity");
+        while (resultSet.next()) {
+            String isbn = resultSet.getString(1);
+            String title = resultSet.getString(2);
+            String name = resultSet.getString(3);
+            String earliest = resultSet.getString(4);
+            String latest = resultSet.getString(5);
+            String total = resultSet.getString(6);
+            System.out.println(isbn +"\t"+ title +"\t"+ name +"\t"+ earliest+
+                    "\t"+ latest+"\t"+ total);
+        }
+        System.out.println();
     }
     public void updateDiscount() throws SQLException
     {
+        String query = "SELECT * FROM BookCopy;";
+        resultSet = statement.executeQuery(query);
     }
     public void printUpdatedDiscount() throws IOException, SQLException
     {
         System.out.println("******** Query 6 ********");
+        System.out.println("ISBN\tTitle\tPubDate\tPubID\tCost\tRetail" +
+                "\tDiscount\tCategory");
+        while (resultSet.next()) {
+            String isbn = resultSet.getString(1);
+            String title = resultSet.getString(2);
+            String pubdate = resultSet.getString(3);
+            String pubid = resultSet.getString(4);
+            String cost = resultSet.getString(5);
+            String retail = resultSet.getString(6);
+            String discount = resultSet.getString(7);
+            String category = resultSet.getString(8);
+            System.out.println(isbn +"\t"+ title +"\t"+ pubdate +"\t"+ pubid+
+                    "\t"+ cost+"\t"+ retail+"\t"+ discount+"\t"+ category);
+        }
+        System.out.println();
     }
     public void findHighestProfit() throws SQLException
     {
